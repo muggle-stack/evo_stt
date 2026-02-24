@@ -57,8 +57,11 @@ pkg_check_modules(CURL REQUIRED libcurl)
 
 # FFTW3
 if(APPLE)
-    find_library(FFTW3_LIBRARIES NAMES fftw3f PATHS /opt/homebrew/lib /usr/local/lib)
-    find_path(FFTW3_INCLUDE_DIRS NAMES fftw3.h PATHS /opt/homebrew/include /usr/local/include)
+    find_library(STT_FFTW3F_LIB NAMES fftw3f PATHS /opt/homebrew/lib /usr/local/lib)
+    find_path(STT_FFTW3_INCLUDE NAMES fftw3.h PATHS /opt/homebrew/include /usr/local/include)
+    set(FFTW3_LIBRARIES ${STT_FFTW3F_LIB})
+    set(FFTW3_INCLUDE_DIRS ${STT_FFTW3_INCLUDE})
+    set(FFTW3_LIBRARY_DIRS /opt/homebrew/lib)
 else()
     pkg_check_modules(FFTW3 REQUIRED fftw3f)
 endif()
@@ -194,7 +197,10 @@ target_link_libraries(sensevoice
     PRIVATE m
 )
 
-target_link_directories(sensevoice PRIVATE ${CURL_LIBRARY_DIRS})
+target_link_directories(sensevoice
+    PUBLIC ${FFTW3_LIBRARY_DIRS}
+    PRIVATE ${CURL_LIBRARY_DIRS}
+)
 
 # -------------------------------------------------------
 # STT Framework Library
